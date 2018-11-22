@@ -5,12 +5,13 @@
     <title>Title</title>
 </head>
 <body>
+    <!--<img id = "pic" src = pics/clone.png" >-->
     <canvas width="1280" height="1024"></canvas>
     <script>
         let cx = document.querySelector("canvas").getContext("2d");
 
         let img = document.createElement('img');
-        img.src = 'pics/clone.png';
+        img.src = 'pics/jam.png';
 
         let x, y;
         // let x1 = 100, y1 = 100,
@@ -43,18 +44,34 @@
 
         let k = 0;
 
-        loop();
+        function draw(img, x, y)
+        {
+            // cx.clearRect(0, 0, 1280, 1024);
+            cx.drawImage(img, x, y);
+        }
+
 
         function loop() {
-            img.addEventListener('load', function () {
-                for (let t = 0; t <= 1; t += 0.05) {
 
-                    x = Math.pow((1 - t), 3) * x1 + 3 * Math.pow((1 - t), 2) * t * x2 + 3 * (1 - t) * t * t * x3 + t * t * t * x4;
-                    y = Math.pow((1 - t), 3) * y1 + 3 * Math.pow((1 - t), 2) * t * y2 + 3 * (1 - t) * t * t * y3 + t * t * t * y4;
-                    setTimeout(loop, "100000");
-                    cx.drawImage(img, x, y);
-                }
-            });
+            for (let t = 0; t <= 1; t += 0.05) {
+
+                x = Math.pow((1 - t), 3) * x1 + 3 * Math.pow((1 - t), 2) * t * x2 + 3 * (1 - t) * t * t * x3 + t * t * t * x4;
+                y = Math.pow((1 - t), 3) * y1 + 3 * Math.pow((1 - t), 2) * t * y2 + 3 * (1 - t) * t * t * y3 + t * t * t * y4;
+
+                //requestAnimationFrame(loop);
+
+                // cx.clearRect(0, 0, 1280, 1024);
+                // cx.drawImage(img, x, y);
+
+                // setTimeout(draw, 1000);
+
+
+                cx.drawImage(img, x, y);
+
+                // setTimeout(loop, 1000);
+                // requestAnimationFrame(loop);
+            }
+
             x1 = x4;
             y1 = y4;
             x2 = getRnd();
@@ -63,7 +80,21 @@
             y3 = getRnd();
             x4 = getRnd();
             y4 = getRnd();
+            // cx.clearRect(0, 0, 1280, 1024);
             k++;
+        }
+
+        loop();
+
+        animate();
+
+        function animate()
+        {
+            setTimeout(function() {
+                requestAnimationFrame(animate);
+                loop();
+            }
+        , 1000);
         }
 
     </script>
