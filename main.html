@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <canvas width="1280" height="1024"></canvas>
+    <script>
+        let cx = document.querySelector("canvas").getContext("2d");
+
+        let img = document.createElement('img');
+        img.src = 'pics/clone.png';
+
+        let x, y;
+        // let x1 = 100, y1 = 100,
+        //     x2 = 200, y2 = 50,
+        //     x3 = 300, y3 = 150,
+        //     x4 = 400, y4 = 84;
+
+        let x1 = getRnd(), y1 = getRnd();
+        let x2 = getRnd(), y2 = getRnd();
+        let x3 = getRnd(), y3 = getRnd();
+        let x4 = getRnd(), y4 = getRnd();
+
+        function getRnd() {
+            return Math.floor(Math.random() * (500 - 1)) + 1;
+        }
+
+        // cx.beginPath();
+        // cx.moveTo(x1, y1);
+        // for (let t = 0; t <= 1; t+= 0.05)
+        // {
+        //     // x = (1 - t) * (1 - t) * x1 + 2 * t * (1 - t) * x2 + t * t * x3;
+        //     // y = (1 - t) * (1 - t) * y1 + 2 * t * (1 - t) * y2 + t * t * y3;
+        //
+        //     x = Math.pow((1 - t), 3) * x1 + 3 * Math.pow((1 - t), 2) * t * x2 + 3 * (1 - t) * t * t * x3 + t * t * t * x4;
+        //     y = Math.pow((1 - t), 3) * y1 + 3 * Math.pow((1 - t), 2) * t * y2 + 3 * (1 - t) * t * t * y3 + t * t * t * y4;
+        //
+        //     cx.lineTo(x, y);
+        // }
+        // cx.stroke();
+
+        let k = 0;
+
+        loop();
+
+        function loop() {
+            img.addEventListener('load', function () {
+                for (let t = 0; t <= 1; t += 0.05) {
+
+                    x = Math.pow((1 - t), 3) * x1 + 3 * Math.pow((1 - t), 2) * t * x2 + 3 * (1 - t) * t * t * x3 + t * t * t * x4;
+                    y = Math.pow((1 - t), 3) * y1 + 3 * Math.pow((1 - t), 2) * t * y2 + 3 * (1 - t) * t * t * y3 + t * t * t * y4;
+                    setTimeout(loop, "100000");
+                    cx.drawImage(img, x, y);
+                }
+            });
+            x1 = x4;
+            y1 = y4;
+            x2 = getRnd();
+            y2 = getRnd();
+            x3 = getRnd();
+            y3 = getRnd();
+            x4 = getRnd();
+            y4 = getRnd();
+            k++;
+        }
+
+    </script>
+</body>
+</html>
