@@ -5,10 +5,13 @@
     <title>Title</title>
 </head>
 <body>
-<canvas width = "1300" height="700"></canvas>
+<canvas id="canvas" ></canvas>
 <script>
 
     let cx = document.querySelector("canvas").getContext("2d");
+    let canvas = document.getElementById("canvas");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
     let img = document.createElement('img');
     img.src = 'pics/clone.png';
@@ -43,6 +46,7 @@
 
     function BezierCurve() {
         let dots = [];
+        let directionX = 1, directionY = 1;
 
         this.calc = function () {
             for (let t = 0; t <= 1; t += 0.05) {
@@ -70,8 +74,8 @@
             dy = Math.random();
             for (let i = 0; i < dots.length; i++)
             {
-                dots[i].x += dx;
-                dots[i].y += dy;
+                dots[i].x += (dx * directionX);
+                dots[i].y += (dy * directionY);
             }
         };
 
@@ -79,10 +83,24 @@
             let minX = dots[0].x, minY = dots[0].y, maxX = dots[0].x, maxY = dots[0].y;
 
             for (let i = 0; i < dots.length; i++) {
-                if (dots[i] < min)
-                    min = dots[i];
+                if (dots[i].x < minX)
+                    minX = dots[i].x;
 
+                if (dots[i].y < minY)
+                    minY = dots[i].y;
+
+                if (dots[i].x > maxX)
+                    maxX = dots[i].x;
+
+                if (dots[i].y > maxY)
+                    maxY = dots[i].y;
             }
+
+            if (minY < 0 || maxY > boundY)
+                directionY *= -1
+
+            if (minX < 0 || maxX > boundX)
+                directionX *= -1
         }
     }
 </script>
