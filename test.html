@@ -8,18 +8,20 @@
 <canvas id="canvas" ></canvas>
 <script>
 
-    let cx = document.querySelector("canvas").getContext("2d");
+    let cx = document.getElementById("canvas").getContext("2d");
     let canvas = document.getElementById("canvas");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width = width = window.innerWidth - 20;
+    canvas.height = height =  window.innerHeight - 20;
 
-    let img = document.createElement('img');
-    img.src = 'pics/clone.png';
+    let doneLoading = false;
 
-    let boundX = window.innerWidth;
-    let boundY = window.innerHeight;
+    let bgImage = new Image();
+    bgImage.src = 'pics/bg.jpg';
+    bgImage.onload = function(){
+        doneLoading = true;
+    };
 
-    let x, y;
+    // let x, y;
 
     let x1 = getRnd(), y1 = getRnd();
     let x2 = getRnd(), y2 = getRnd();
@@ -33,10 +35,30 @@
     let line = new BezierCurve();
     line.calc();
 
-    setInterval(function(){
-        line.update();
+    // let line2 = new BezierCurve();
+    // line2.copy(line.getDots());
+
+    function redraw(){
+
+        if (!doneLoading) return;
+
+        // cx.drawImage(bgImage,
+        //     0,0,width,height,
+        //     0,0,width,height);
+
         line.draw();
+        // line2.draw();
+    }
+
+    function go(){
+        // line2.copy(line.getDots());
+        line.update();
+        redraw();
         line.checkBounds();
+    }
+
+    setInterval(function(){
+        go();
     },10);
 
     function Dot(x, y) {
@@ -47,6 +69,15 @@
     function BezierCurve() {
         let dots = [];
         let directionX = 1, directionY = 1;
+
+        this.copy = function (points) {
+            for (let i = 0; i < points.length; i++)
+                dots.push(points[i]);
+        };
+
+        this.getDots = function () {
+            return dots;
+        };
 
         this.calc = function () {
             for (let t = 0; t <= 1; t += 0.05) {
@@ -61,17 +92,19 @@
 
         this.draw = function() {
             cx.beginPath();
-            cx.moveTo(x1, y1);
+            cx.moveTo(dots[0].x, dots[0].y);
             for (let i = 0; i < dots.length; i++)
             {
                 cx.lineTo(dots[i].x, dots[i].y);
             }
+            cx.strokeStyle = "#FF0000";
             cx.stroke();
         };
 
         this.update = function() {
-            dx = Math.random();
-            dy = Math.random();
+            // dx = Math.random();
+            // dy = Math.random();
+            dx = dy = 1;
             for (let i = 0; i < dots.length; i++)
             {
                 dots[i].x += (dx * directionX);
@@ -96,10 +129,10 @@
                     maxY = dots[i].y;
             }
 
-            if (minY < 0 || maxY > boundY)
+            if (minY < 0 || maxY > height)
                 directionY *= -1
 
-            if (minX < 0 || maxX > boundX)
+            if (minX < 0 || maxX > width)
                 directionX *= -1
         }
     }

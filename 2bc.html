@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<canvas id="canvas" ></canvas>
+<script>
+
+    let cx = document.getElementById("canvas").getContext("2d");
+    let canvas = document.getElementById("canvas");
+    canvas.width = width = window.innerWidth - 20;
+    canvas.height = height =  window.innerHeight - 20;
+
+    let doneLoading = false;
+
+    let bgImage = new Image();
+    bgImage.src = 'pics/bg.jpg';
+    bgImage.onload = function(){
+        doneLoading = true;
+    };
+
+    function getRnd(bound) {
+        return Math.floor(Math.random() * (bound - 1)) + 1;
+    }
+
+    let line = new BezierCurve();
+    line.init();
+
+    let line2 = new BezierCurve();
+    line2.init();
+
+
+    function drawLine() {
+        cx.beginPath();
+        cx.moveTo(line.getCurr().x, line.getCurr().y);
+        cx.lineTo(line2.getCurr().x, line2.getCurr().y);
+
+        // cx.strokeStyle = "#FF0000";
+        cx.strokeStyle = getRandomColor()
+        cx.stroke();
+    }
+
+    function getRandomColor() {
+        let letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+    function update() {
+        line.calc();
+        line2.calc();
+    }
+
+    function go(){
+        // cx.drawImage(bgImage,
+        //     0,0,width,height,
+        //     0,0,width,height);
+        update()
+        drawLine()
+
+    }
+
+    setInterval(function(){
+        go();
+    },150);
+
+    function Dot(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    function BezierCurve() {
+        let currPoint;
+        let t, x1, x2, x3, x4, y1, y2, y3, y4;
+
+        this.getCurr = function () {
+            return currPoint;
+        }
+
+        this.init = function () {
+            t = 0;
+            x1 = getRnd(width); y1 = getRnd(height);
+            x2 = getRnd(width); y2 = getRnd(height);
+            x3 = getRnd(width); y3 = getRnd(height);
+            x4 = getRnd(width); y4 = getRnd(height);
+        }
+
+        this.calc = function () {
+            if (t <= 1)
+            {
+                x = Math.pow((1 - t), 3) * x1 + 3 * Math.pow((1 - t), 2) * t * x2 + 3 * (1 - t) * t * t * x3 + t * t * t * x4;
+                y = Math.pow((1 - t), 3) * y1 + 3 * Math.pow((1 - t), 2) * t * y2 + 3 * (1 - t) * t * t * y3 + t * t * t * y4;
+
+                currPoint = new Dot(x, y);
+
+                t += 0.05;
+            }
+            else
+            {
+                x1 = x4
+                y1 = y4
+
+                x2 = getRnd(width); y2 = getRnd(height);
+                x3 = getRnd(width); y3 = getRnd(height);
+                x4 = getRnd(width); y4 = getRnd(height);
+                t = 0;
+            }
+
+
+
+        };
+    }
+</script>
+</body>
+</html>
