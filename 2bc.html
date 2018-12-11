@@ -31,18 +31,67 @@
     let line2 = new BezierCurve();
     line2.init();
 
+    let line3 = new BezierCurve();
+    line3.init();
+
+    let changeColor = 0;
+    let color = "";
+
+    //h [0, 360], s [0, 100], v [0, 100]
+    /**
+     * @return {string}
+     */
+    function HSVtoRGB(h, s, v) {
+        let r, g, b
+        hi = (h / 60) % 6
+        vmin = ((100 - s) * v) / 100
+        a = (v - vmin) * ((h % 60) / 60)
+        vinc = vmin + a
+        vdec = v - a
+        switch (hi) {
+            case 0: r = v; g = vinc; b = vmin; break;
+            case 1: r = vdec; g = v; b = vmin; break;
+            case 2: r = vmin; g = v; b = vinc; break;
+            case 3: r = vmin; g = vdec; b = v; break;
+            case 4: r = vinc; g = vmin; b = v; break;
+            case 5: r = v; g = vmin; b = vdec; break;
+        }
+        r *= (255 / 100)
+        g *= (255 / 100)
+        b *= (255 / 100)
+
+        // return "#"+(r).toString(16)+(g).toString(16)+(b).toString(16);
+        return "rgb(" + r + ", " + g + ", " + b + ")";
+    }
+
+    let H = 5, S = 80, V = 80
+
+    function getColor() {
+        H++;
+        if (H == 360)
+            H = 5;
+        return HSVtoRGB(H, S, V)
+    }
 
     function drawLine() {
+        changeColor++;
+
         cx.beginPath();
         cx.moveTo(line.getCurr().x, line.getCurr().y);
         cx.lineTo(line2.getCurr().x, line2.getCurr().y);
+        cx.lineTo(line3.getCurr().x, line3.getCurr().y);
+        cx.lineTo(line.getCurr().x, line.getCurr().y);
 
         // cx.strokeStyle = "#FF0000";
-        cx.strokeStyle = getRandomColor()
-        cx.strokeStyle = "#000000"
+        // if (changeColor % 8 == 0)
+        //     color = getRandomColor()
+        // cx.strokeStyle = color
+        // cx.strokeStyle = "#000000"
+
+        cx.strokeStyle = getColor()
         cx.stroke();
 
-        cx.fillStyle = "rgba(255,255,255,0.1)"
+        cx.fillStyle = "rgba(0,0,0,0.1)"
         cx.fillRect(0, 0, width, height)
     }
 
@@ -58,6 +107,7 @@
     function update() {
         line.calc();
         line2.calc();
+        line3.calc();
     }
 
     function go(){
@@ -71,7 +121,7 @@
 
     setInterval(function(){
         go();
-    },150);
+    },100);
 
     function Dot(x, y) {
         this.x = x;
@@ -102,7 +152,7 @@
 
                 currPoint = new Dot(x, y);
 
-                t += 0.05;
+                t += 0.005;
             }
             else
             {
